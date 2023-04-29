@@ -19,9 +19,13 @@
 // @compatible  Chrome
 // @compatible  Firefox
 // @license     MIT
-// @downloadURL https://update.greasyfork.org/scripts/423001/Twitter%20Media%20Downloader.user.js
-// @updateURL https://update.greasyfork.org/scripts/423001/Twitter%20Media%20Downloader.meta.js
+// @require     https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/piexifjs/1.0.6/piexif.min.js
 // ==/UserScript==
+
+function toUTF8(s){
+return String.fromCharCode(...(new TextEncoder().encode(s)));
+}
+
 /* jshint esversion: 8 */
 
 const filename = 'twitter_{user-name}(@{user-id})_{date-time}_{status-id}_{file-type}';
@@ -148,6 +152,35 @@ const TMD = (function () {
           info['file-ext'] = info.file.split('.').pop();
           info['file-type'] = media.type.replace('animated_', '');
           info.out = (out.replace(/\.?{file-ext}/, '') + ((medias.length > 1 || index) && !out.match('{file-name}') ? '-' + (index ? index - 1 : i) : '') + '.{file-ext}').replace(/{([^{}:]+)(:[^{}]+)?}/g, (match, name) => info[name]);
+          console.log(info);
+          let fname = info.file;
+          if (info['file-ext'] == "jpg") {
+            fetch(info.url)
+              .then(response => response.blob().then(function(blob){
+                let reader = new FileReader();
+                reader.readAsDataURL(blob);
+                reader.onloadend = function() {
+                  let jpegData = reader.result;
+                  console.log(jpegData);
+                  let zeroth = {};
+                  let exif = {};
+                  let gps = {};
+                  zeroth[piexif.ImageIFD.Copyright] = `https://twitter.com/${info['user-id']}/status/${info['status-id']}`;
+                  zeroth[piexif.ImageIFD.Artist] = toUTF8(user.name);
+                  exif[piexif.ExifIFD.UserComment] = toUTF8(tweet.full_text);
+                  let exifObj = {"0th":zeroth, "Exif":exif, "GPS":gps};
+                  let exifbytes = piexif.dump(exifObj);
+                  let inserted = piexif.insert(exifbytes, jpegData);
+                  let link = document.createElement("a");
+                  link.download = fname;
+                  link.href = inserted;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  delete link;
+                }
+              }))
+          } else
           this.downloader.add({
             url: info.url,
             name: info.out,
