@@ -1,0 +1,20 @@
+name: pull
+
+on:
+  schedule:
+    - cron: '28 21 * * *'
+  workflow_dispatch:
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: curl 'https://greasyfork.org/scripts/423001-twitter-media-downloader/code/Twitter%20Media%20Downloader.user.js' -o 'Twitter Media Downloader.user.js'
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
