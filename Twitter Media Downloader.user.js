@@ -7,7 +7,7 @@
 // @description:ja ワンクリックで動画・画像を保存する。
 // @description:zh-cn 一键保存视频/图片
 // @description:zh-tw 一鍵保存視頻/圖片
-// @version     1.05
+// @version     1.06
 // @author      AMANE
 // @namespace   none
 // @match       https://twitter.com/*
@@ -70,7 +70,7 @@ const TMD = (function () {
         btn_down.onclick = () => this.click(btn_down, status_id, is_exist);
         article.dataset.injected = 'true';
         if (show_sensitive) {
-          let btn_show = article.querySelector('div[aria-labelledby] div[role="button"][tabindex="0"]:not([data-testid]) > div[dir]');
+          let btn_show = article.querySelector('div[aria-labelledby] div[role="button"][tabindex="0"]:not([data-testid]) > div[dir] > span > span');
           if (btn_show) btn_show.click();
         }
       }
