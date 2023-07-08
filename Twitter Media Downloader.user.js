@@ -7,7 +7,7 @@
 // @description:ja ワンクリックで動画・画像を保存する。
 // @description:zh-cn 一键保存视频/图片
 // @description:zh-tw 一鍵保存視頻/圖片
-// @version     1.06
+// @version     1.11
 // @author      AMANE
 // @namespace   none
 // @match       https://twitter.com/*
@@ -98,8 +98,8 @@ const TMD = (function () {
       let out = (await GM_getValue('filename', filename)).split('\n').join('');
       let save_history = await GM_getValue('save_history', true);
       let json = await this.fetchJson(status_id);
-      let tweet = json.globalObjects.tweets[status_id];
-      let user = json.globalObjects.users[tweet.user_id_str];
+      let tweet = json.legacy;
+      let user = json.core.user_results.result.legacy;
       let invalid_chars = {'\\': '＼', '\/': '／', '\|': '｜', '<': '＜', '>': '＞', ':': '：', '*': '＊', '?': '？', '"': '＂', '\u200b': '', '\u200c': '', '\u200d': '', '\u2060': '', '\ufeff': '', '🔞': ''};
       let datetime = out.match(/{date-time(-local)?:[^{}]+}/) ? out.match(/{date-time(?:-local)?:([^{}]+)}/)[1].replace(/[\\/|<>*?:"]/g, v => invalid_chars[v]) : 'YYYYMMDD-hhmmss';
       let info = {};
@@ -115,7 +115,7 @@ const TMD = (function () {
         let tasks = medias.length;
         let tasks_result = [];
         medias.forEach((media, i) => {
-          info.url = media.type == 'photo' ? media.media_url + ':orig' : media.video_info.variants.filter(n => n.content_type == 'video/mp4').sort((a, b) => b.bitrate - a.bitrate)[0].url;
+          info.url = media.type == 'photo' ? media.media_url_https + ':orig' : media.video_info.variants.filter(n => n.content_type == 'video/mp4').sort((a, b) => b.bitrate - a.bitrate)[0].url;
           info.file = info.url.split('/').pop().split(/[:?]/).shift();
           info['file-name'] = info.file.split('.').shift();
           info['file-ext'] = info.file.split('.').pop();
@@ -230,7 +230,40 @@ const TMD = (function () {
       };
     },
     fetchJson: async function (status_id) {
-      let url = 'https://' + host + '/i/api/2/timeline/conversation/' + status_id + '.json?tweet_mode=extended&include_entities=false&include_user_entities=false';
+      let base_url = `https://${host}/i/api/graphql/NmCeCgkVlsRGS1cAwqtgmw/TweetDetail`;
+      let variables = {
+        "focalTweetId":status_id,
+        "with_rux_injections":false,
+        "includePromotedContent":true,
+        "withCommunity":true,
+        "withQuickPromoteEligibilityTweetFields":true,
+        "withBirdwatchNotes":true,
+        "withVoice":true,
+        "withV2Timeline":true
+      };
+      let features = {
+        "rweb_lists_timeline_redesign_enabled":true,
+        "responsive_web_graphql_exclude_directive_enabled":true,
+        "verified_phone_label_enabled":false,
+        "creator_subscriptions_tweet_preview_api_enabled":true,
+        "responsive_web_graphql_timeline_navigation_enabled":true,
+        "responsive_web_graphql_skip_user_profile_image_extensions_enabled":false,
+        "tweetypie_unmention_optimization_enabled":true,
+        "responsive_web_edit_tweet_api_enabled":true,
+        "graphql_is_translatable_rweb_tweet_is_translatable_enabled":true,
+        "view_counts_everywhere_api_enabled":true,
+        "longform_notetweets_consumption_enabled":true,
+        "responsive_web_twitter_article_tweet_consumption_enabled":false,
+        "tweet_awards_web_tipping_enabled":false,
+        "freedom_of_speech_not_reach_fetch_enabled":true,
+        "standardized_nudges_misinfo":true,
+        "tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled":true,
+        "longform_notetweets_rich_text_read_enabled":true,
+        "longform_notetweets_inline_media_enabled":true,
+        "responsive_web_media_download_video_enabled":false,
+        "responsive_web_enhance_cards_enabled":false
+      };
+      let url = encodeURI(`${base_url}?variables=${JSON.stringify(variables)}&features=${JSON.stringify(features)}`);
       let cookies = this.getCookie();
       let headers = {
         'authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA',
@@ -239,7 +272,9 @@ const TMD = (function () {
         'x-csrf-token': cookies.ct0
       };
       if (cookies.ct0.length == 32) headers['x-guest-token'] = cookies.gt;
-      return await fetch(url, {headers: headers}).then(result => result.json());
+      let tweet_detail = await fetch(url, {headers: headers}).then(result => result.json());
+      let tweet_result = tweet_detail.data.threaded_conversation_with_injections_v2.instructions[0].entries[0].content.itemContent.tweet_results.result;
+      return tweet_result.tweet || tweet_result;
     },
     getCookie: function (name) {
       let cookies = {};
