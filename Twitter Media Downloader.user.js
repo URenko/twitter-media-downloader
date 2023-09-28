@@ -7,7 +7,7 @@
 // @description:ja ワンクリックで動画・画像を保存する。
 // @description:zh-cn 一键保存视频/图片
 // @description:zh-tw 一鍵保存視頻/圖片
-// @version     1.12
+// @version     1.13
 // @author      AMANE
 // @namespace   none
 // @match       https://twitter.com/*
@@ -403,6 +403,7 @@ const TMD = (function () {
       'zh-Hant': {download: '下載', completed: '下載完成', settings: '設置', dialog: {title: '下載設置', save: '保存', save_history: '保存下載記錄', clear_history: '(清除)', clear_confirm: '確認要清除下載記錄？', show_sensitive: '自動顯示敏感的内容', pattern: '文件名規則'}}
     },
     css: `
+.tmd-down {margin-left: 2em;}
 .tmd-down > div > div > div:nth-child(2) {display: none}
 .tmd-down:hover > div > div > div {color: rgba(29, 161, 242, 1.0);}
 .tmd-down:hover > div > div > div > div > div {background-color: rgba(29, 161, 242, 0.1);}
