@@ -7,7 +7,7 @@
 // @description:ja ワンクリックで動画・画像を保存する。
 // @description:zh-cn 一键保存视频/图片
 // @description:zh-tw 一鍵保存視頻/圖片
-// @version     1.13
+// @version     1.14
 // @author      AMANE
 // @namespace   none
 // @match       https://twitter.com/*
@@ -403,11 +403,11 @@ const TMD = (function () {
       'zh-Hant': {download: '下載', completed: '下載完成', settings: '設置', dialog: {title: '下載設置', save: '保存', save_history: '保存下載記錄', clear_history: '(清除)', clear_confirm: '確認要清除下載記錄？', show_sensitive: '自動顯示敏感的内容', pattern: '文件名規則'}}
     },
     css: `
-.tmd-down {margin-left: 2em;}
+.tmd-down {margin-left: 12px; order: 99;}
 .tmd-down > div > div > div:nth-child(2) {display: none}
 .tmd-down:hover > div > div > div {color: rgba(29, 161, 242, 1.0);}
-.tmd-down:hover > div > div > div > div > div {background-color: rgba(29, 161, 242, 0.1);}
-.tmd-down:active > div > div > div > div > div {background-color: rgba(29, 161, 242, 0.2);}
+.tmd-down:hover > div > div > div > div {background-color: rgba(29, 161, 242, 0.1);}
+.tmd-down:active > div > div > div > div {background-color: rgba(29, 161, 242, 0.2);}
 .tmd-down g {display: none;}
 .tmd-down.download g.download, .tmd-down.completed g.completed, .tmd-down.loading g.loading,.tmd-down.failed g.failed {display: unset;}
 .tmd-down.loading svg {animation: spin 1s linear infinite;}
@@ -416,7 +416,7 @@ const TMD = (function () {
 .tmd-tag {display: inline-block; background-color: #FFFFFF; color: #1DA1F2; padding: 0 10px; border-radius: 10px; border: 1px solid #1DA1F2;  font-weight: bold; margin: 5px;}
 .tmd-btn:hover {background-color: rgba(29, 161, 242, 0.9);}
 .tmd-tag:hover {background-color: rgba(29, 161, 242, 0.1);}
-.tmd-notifier {display: none; position: fixed; left: 16px; bottom: 16px; background: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 4px;}
+.tmd-notifier {display: none; position: fixed; left: 16px; bottom: 16px; color: #000; background: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 4px;}
 .tmd-notifier.running {display: flex; align-items: center;}
 .tmd-notifier label {display: inline-flex; align-items: center; margin: 0 8px;}
 .tmd-notifier label:before {content: " "; width: 32px; height: 16px; background-position: center; background-repeat: no-repeat;}
@@ -425,9 +425,9 @@ const TMD = (function () {
 .tmd-notifier label:nth-child(3):before {background-image:url("data:image/svg+xml;charset=utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 viewBox=%220 0 24 24%22><path d=%22M12,0 a2,2 0 0 0 0,24 a2,2 0 0 0 0,-24%22 fill=%22%23f66%22 stroke=%22none%22 /><path d=%22M14.5,5 a1,1 0 0 0 -5,0 l0.5,9 a1,1 0 0 0 4,0 z M12,17 a2,2 0 0 0 0,5 a2,2 0 0 0 0,-5%22 fill=%22%23fff%22 stroke=%22none%22 /></svg>");}
 .tmd-down.tmd-img {position: absolute; right: .75em; bottom: .75em; display: none !important;}
 :hover > .tmd-down.tmd-img, .tmd-img.loading, .tmd-img.completed, .tmd-img.failed {display: block !important;}
-:hover > .tmd-down.tmd-img > div > div > div {color: rgba(0, 0, 0, 0.6);}
-:hover > .tmd-down.tmd-img > div > div > div > div > div {background-color: rgba(255,255,255, 0.6);}
-:hover > .tmd-down.tmd-img:hover > div > div > div {color: rgba(29, 161, 242, 1.0);}
+:hover > .tmd-down.tmd-img > div > div {color: rgba(0, 0, 0, 0.6);}
+:hover > .tmd-down.tmd-img > div > div > div > div {background-color: rgba(255,255,255, 0.6);}
+:hover > .tmd-down.tmd-img:hover > div > div {color: rgba(29, 161, 242, 1.0);}
 .tweet-detail-action-item {width: 20% !important;}
 `,
     svg: `
